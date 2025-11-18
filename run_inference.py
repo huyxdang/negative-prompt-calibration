@@ -86,10 +86,10 @@ def create_prompt(example, negative_context=None):
     """
     problem = example['problem']
     
-    base_prompt = """Solve the following math problem step by step.
+    base_prompt = f"""Solve the following math problem step by step.
 
 At the end of your solution:
-1. Provide your final answer in LaTeX format: \\boxed{<answer>}
+1. Provide your final answer in LaTeX format: \\boxed{{<answer>}}
 2. State your confidence as a percentage: Confidence: XX%
 
 Problem: {problem}
