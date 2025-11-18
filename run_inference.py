@@ -86,7 +86,7 @@ def create_prompt(example, negative_context=None):
     """
     problem = example['problem']
     
-    base_prompt = f"""Solve the following math problem step by step.
+    base_prompt = """Solve the following math problem step by step.
 
 At the end of your solution:
 1. Provide your final answer in LaTeX format: \\boxed{{<answer>}}
@@ -96,17 +96,20 @@ Problem: {problem}
 
 Solution:"""
     
+    # Use replace instead of format to avoid issues with braces in problem text
+    prompt_text = base_prompt.replace("{problem}", problem)
+    
     if negative_context:
         # Use chat format with system message
         system_message = negative_context.strip()
-        user_message = base_prompt.format(problem=problem)
+        user_message = prompt_text
         return [
             {"role": "system", "content": system_message},
             {"role": "user", "content": user_message}
         ]
     else:
         # Simple prompt for baseline
-        return base_prompt.format(problem=problem)
+        return prompt_text
 
 
 def run_inference(model_name, sampled_data, output_file, 
