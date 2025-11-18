@@ -357,8 +357,8 @@ def analyze_predictions(predictions_file, output_dir, n_bins=10):
     metrics = {
         "accuracy": acc_metrics,
         "calibration": {
-            "ece": ece,
-            "ece_percent": ece * 100,
+            "ece": float(ece),  # Add float()
+            "ece_percent": float(ece * 100),  # Add float()
             "n_bins": len(bin_info),
             "bin_info": bin_info
         },
@@ -370,7 +370,7 @@ def analyze_predictions(predictions_file, output_dir, n_bins=10):
             "min": float(conf_array.min()),
             "max": float(conf_array.max())
         },
-        "n_samples": len(data)
+        "n_samples": int(len(data))  # Add int()
     }
     
     metrics_file = os.path.join(output_dir, "metrics.json")
