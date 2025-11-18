@@ -184,7 +184,7 @@ def run_inference(model_name, sampled_data, output_file,
     # Sampling params
     params = SamplingParams(
         temperature=0.7,  # Slight temperature for confidence diversity
-        max_tokens=2048,
+        max_tokens=1024,
         stop=["\n\n\n"],  # Stop on triple newline
     )
     

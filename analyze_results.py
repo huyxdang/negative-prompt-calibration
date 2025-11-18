@@ -15,31 +15,6 @@ from scipy import stats
 import os
 
 
-def extract_confidence(response):
-    """
-    Extract confidence score from model response.
-    Expected format: "Confidence: XX%" somewhere in the response.
-    
-    Returns:
-        Confidence as float 0-100, or None if not found
-    """
-    # Look for patterns like "Confidence: 95%" or "confidence: 95%"
-    import re
-    
-    patterns = [
-        r'[Cc]onfidence:\s*(\d+(?:\.\d+)?)\s*%',
-        r'[Cc]onfidence\s*=\s*(\d+(?:\.\d+)?)\s*%',
-        r'[Cc]onfidence\s*:\s*(\d+(?:\.\d+)?)',
-    ]
-    
-    for pattern in patterns:
-        match = re.search(pattern, response)
-        if match:
-            return float(match.group(1))
-    
-    return None
-
-
 def load_predictions(predictions_file):
     """Load predictions and extract confidence + correctness."""
     print(f"Loading predictions from: {predictions_file}")
@@ -59,25 +34,24 @@ def load_predictions(predictions_file):
         judge_response = pred["judge_response"]
         is_correct = judge_response.get("correct", "").lower() == "yes"
         
-        # Extract confidence
-        response = pred.get("response", "")
-        confidence = extract_confidence(response)
+        # Get confidence from judge (already extracted)
+        confidence = judge_response.get("confidence")
         
         if confidence is None:
             missing_confidence += 1
             continue
         
-        # Clip confidence to [0, 100]
-        confidence = np.clip(confidence, 0, 100)
+        # Already 0-100, convert to [0, 1]
+        confidence = np.clip(confidence, 0, 100) / 100.0
         
         data.append({
             "id": unique_id,
-            "confidence": confidence / 100.0,  # Convert to [0, 1]
+            "confidence": confidence,
             "correct": 1 if is_correct else 0,
             "level": pred.get("level", "unknown"),
             "type": pred.get("type", "unknown"),
             "question": pred.get("question", ""),
-            "response": response
+            "response": pred.get("response", "")
         })
     
     print(f"Loaded {len(data)} predictions")
