@@ -1,0 +1,9 @@
+datasets
+vllm>=0.6.0
+openai>=1.0.0
+pydantic>=2.0.0
+tqdm
+matplotlib
+scipy
+numpy
+torch
