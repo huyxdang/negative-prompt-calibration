@@ -101,12 +101,12 @@ def calculate_accuracy(data):
     ci_half_width = 1.96 * se * 100
     
     return {
-        "accuracy": accuracy,
-        "correct": correct,
-        "total": n,
-        "ci_lower": accuracy - ci_half_width,
-        "ci_upper": accuracy + ci_half_width,
-        "ci_half_width": ci_half_width
+        "accuracy": float(accuracy),
+        "correct": int(correct),
+        "total": int(n),
+        "ci_lower": float(accuracy - ci_half_width),
+        "ci_upper": float(accuracy + ci_half_width),
+        "ci_half_width": float(ci_half_width)
     }
 
 
@@ -160,14 +160,14 @@ def calculate_ece(confidences, correct, n_bins=10, use_percentile=True):
         ece += weight * abs(avg_confidence - avg_accuracy)
         
         bin_info.append({
-            "bin_index": i,
-            "avg_confidence": avg_confidence,
-            "avg_accuracy": avg_accuracy,
-            "n_samples": n_samples,
-            "gap": abs(avg_confidence - avg_accuracy)
+            "bin_index": int(i),
+            "avg_confidence": float(avg_confidence),
+            "avg_accuracy": float(avg_accuracy),
+            "n_samples": int(n_samples),
+            "gap": float(abs(avg_confidence - avg_accuracy))
         })
     
-    return ece, bin_info
+    return float(ece), bin_info
 
 
 def calculate_overconfidence_rate(confidences, correct):
@@ -194,22 +194,22 @@ def calculate_overconfidence_rate(confidences, correct):
     
     # Of those confident predictions, how many were wrong?
     overconfident_mask = confident_mask & (correct == 0)
-    n_overconfident = overconfident_mask.sum()
-    overconfidence_rate = n_overconfident / n_confident * 100
+    n_overconfident = int(overconfident_mask.sum())
+    overconfidence_rate = float(n_overconfident / n_confident * 100)
     
     # Average gap for overconfident predictions
     if n_overconfident > 0:
         overconfident_confidences = confidences[overconfident_mask]
         # Gap is confidence - 0 (since they're wrong)
-        avg_gap = overconfident_confidences.mean()
+        avg_gap = float(overconfident_confidences.mean())
     else:
         avg_gap = 0.0
     
     return {
-        "overconfidence_rate": overconfidence_rate,
-        "n_confident": n_confident,
-        "n_overconfident": n_overconfident,
-        "avg_overconfidence_gap": avg_gap
+        "overconfidence_rate": float(overconfidence_rate),
+        "n_confident": int(n_confident),
+        "n_overconfident": int(n_overconfident),
+        "avg_overconfidence_gap": float(avg_gap)
     }
 
 
@@ -359,7 +359,7 @@ def analyze_predictions(predictions_file, output_dir, n_bins=10):
         "calibration": {
             "ece": float(ece),  # Add float()
             "ece_percent": float(ece * 100),  # Add float()
-            "n_bins": len(bin_info),
+            "n_bins": int(len(bin_info)),
             "bin_info": bin_info
         },
         "overconfidence": overconf_metrics,
